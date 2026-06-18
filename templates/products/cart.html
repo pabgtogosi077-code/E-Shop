@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% block title %}Savat - E-Shop{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="page-heading mb-4">
+        <span class="badge bg-warning text-dark mb-2">Savat</span>
+        <h3 class="fw-bold mb-1"><i class="bi bi-cart3"></i> Mening savatim</h3>
+        <p class="text-muted mb-0">Tanlangan mahsulotlaringizni tekshiring va buyurtmaga o'ting.</p>
+    </div>
+
+    {% if cart.items.all %}
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-0">
+                    {% for item in cart.items.all %}
+                    <div class="cart-item d-flex align-items-center p-3 border-bottom gap-3">
+                        <div style="width:90px;height:90px;flex-shrink:0;">
+                            {% if item.product.image %}
+                                <img src="{{ item.product.image.url }}" class="rounded-3 w-100 h-100" style="object-fit:cover;">
+                            {% else %}
+                                <div class="placeholder-image rounded-3 w-100 h-100 d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-image text-muted"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="flex-grow-1">
+                            <a href="{% url 'product_detail' item.product.slug %}" class="text-dark text-decoration-none fw-semibold">
+                                {{ item.product.name }}
+                            </a>
+                            <p class="text-muted small mb-0">{{ item.product.price|floatformat:0 }} so'm / dona</p>
+                            <small class="text-{% if item.product.is_in_stock %}success{% else %}danger{% endif %}">
+                                {% if item.product.is_in_stock %}Mavjud{% else %}Tugagan{% endif %}
+                            </small>
+                        </div>
+
+                        <form method="post" action="{% url 'update_cart' item.id %}" class="d-flex align-items-center gap-2">
+                            {% csrf_token %}
+                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}"
+                                   class="form-control form-control-sm text-center" style="width:70px;"
+                                   onchange="this.form.submit()">
+                        </form>
+
+                        <div class="text-end" style="min-width:130px;">
+                            <strong>{{ item.total_price|floatformat:0 }} so'm</strong>
+                        </div>
+
+                        <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-outline-danger btn-sm"
+                           onclick="return confirm('Olib tashlashni tasdiqlaysizmi?')">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <a href="{% url 'product_list' %}" class="btn btn-outline-dark mt-3">
+                <i class="bi bi-arrow-left"></i> Xaridni davom ettirish
+            </a>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 sticky-top">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4">Buyurtma xulosasi</h5>
+                    <div class="summary-row">
+                        <span>Mahsulotlar ({{ cart.total_items }} ta)</span>
+                        <span>{{ cart.total_price|floatformat:0 }} so'm</span>
+                    </div>
+                    <div class="summary-row text-success">
+                        <span>Yetkazib berish</span>
+                        <span>{{ cart.shipping_fee|floatformat:0 }} so'm</span>
+                    </div>
+                    <hr>
+                    <div class="summary-row total-row">
+                        <span>Jami</span>
+                        <span>{{ cart.grand_total_price|floatformat:0 }} so'm</span>
+                    </div>
+                    <a href="{% url 'checkout' %}" class="btn btn-dark w-100 py-3 mt-4 fw-semibold">
+                        <i class="bi bi-credit-card"></i> Buyurtma berish
+                    </a>
+
+                    {% if coupon %}
+                    <div class="alert alert-success mt-3 mb-0 d-flex align-items-center gap-2" role="alert">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <div>
+                            <strong>Kupon qo'llanildi:</strong> {{ coupon.code }}
+                            <br><small class="text-muted">Chegirma: -{{ discount|floatformat:0 }} so'm ({{ coupon.get_discount_type_display }})</small>
+                        </div>
+                    </div>
+                    <form method="post" class="mt-2">
+                        {% csrf_token %}
+                        <input type="hidden" name="coupon_code" value="">
+                        <button type="submit" class="btn btn-outline-secondary btn-sm w-100">
+                            <i class="bi bi-x-circle"></i> Kuponi olib tashlash
+                        </button>
+                    </form>
+                    {% endif %}
+                    <div class="delivery-info mt-3">
+                        <strong><i class="bi bi-info-circle"></i> Yetkazib berish</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>75 000 so'mgacha: 10 000 so'm</li>
+                            <li>200 000 so'mgacha: 5 000 so'm</li>
+                            <li>1 000 000 so'mdan yuqori: tekin</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="text-center py-5">
+        <div class="empty-state-card mx-auto p-5">
+            <i class="bi bi-cart-x text-muted" style="font-size:100px;"></i>
+            <h4 class="mt-3 text-muted">Savatingiz bo'sh</h4>
+            <p class="text-muted">Xaridni boshlash uchun mahsulotlar bo'limiga o'ting.</p>
+            <a href="{% url 'product_list' %}" class="btn btn-dark mt-3 px-5">
+                <i class="bi bi-shop"></i> Xarid qilish
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

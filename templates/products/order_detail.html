@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% block title %}Buyurtma #{{ order.id }} - E-Shop{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+        <a href="{% url 'orders' %}" class="btn btn-outline-dark btn-sm">
+            <i class="bi bi-arrow-left"></i> Orqaga
+        </a>
+        <div class="page-heading mb-0">
+            <span class="badge bg-warning text-dark mb-2">Order #{{ order.id }}</span>
+            <h3 class="fw-bold mb-1"><i class="bi bi-bag-check"></i> Buyurtma tafsilotlari</h3>
+        </div>
+        <span class="status-badge px-3 py-2
+            {% if order.status == 'delivered' %}status-success
+            {% elif order.status == 'cancelled' %}status-danger
+            {% elif order.status == 'shipped' %}status-info
+            {% elif order.status == 'processing' %}status-primary
+            {% else %}status-warning{% endif %}">
+            {{ order.get_status_display }}
+        </span>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-white fw-bold border-0 pt-4 pb-0">
+                    <h5><i class="bi bi-bag"></i> Buyurtma tarkibi</h5>
+                </div>
+                <div class="card-body">
+                    {% for item in order.items.all %}
+                    <div class="d-flex gap-3 mb-3 border-bottom pb-3">
+                        <div style="width:76px;height:76px;flex-shrink:0;">
+                            {% if item.product.image %}
+                                <img src="{{ item.product.image.url }}" class="rounded-3 w-100 h-100" style="object-fit:cover;">
+                            {% else %}
+                                <div class="placeholder-image rounded-3 w-100 h-100 d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-image text-muted"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="fw-semibold mb-1">
+                                <a href="{% url 'product_detail' item.product.slug %}" class="text-dark text-decoration-none">
+                                    {{ item.product.name }}
+                                </a>
+                            </h6>
+                            <p class="text-muted small mb-0">{{ item.quantity }} dona × {{ item.price|floatformat:0 }} so'm</p>
+                        </div>
+                        <div class="text-end">
+                            <strong>{{ item.total_price|floatformat:0 }} so'm</strong>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <div class="summary-row">
+                        <span>Mahsulotlar summasi</span>
+                        <strong>{{ order.total_price|floatformat:0 }} so'm</strong>
+                    </div>
+                    <div class="summary-row text-success">
+                        <span>Yetkazib berish</span>
+                        <strong>{{ order.shipping_fee|floatformat:0 }} so'm</strong>
+                    </div>
+                    {% if order.discount_amount %}
+                    <div class="summary-row text-danger">
+                        <span>Kupon chegirma</span>
+                        <strong>-{{ order.discount_amount|floatformat:0 }} so'm</strong>
+                    </div>
+                    {% endif %}
+                    <div class="summary-row total-row">
+                        <span>Jami</span>
+                        <span>{{ order.grand_total_price|floatformat:0 }} so'm</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-info-circle"></i> Ma'lumotlar</h5>
+
+                    <div class="info-box">
+                        <small class="text-muted">Buyurtma sanasi</small>
+                        <p class="fw-semibold mb-0">{{ order.created_at|date:"d.m.Y H:i" }}</p>
+                    </div>
+                    <div class="info-box">
+                        <small class="text-muted">To'liq ism</small>
+                        <p class="fw-semibold mb-0">{{ order.full_name|default:order.user.username }}</p>
+                    </div>
+                    <div class="info-box">
+                        <small class="text-muted">Telefon</small>
+                        <p class="fw-semibold mb-0">{{ order.phone }}</p>
+                    </div>
+                    <div class="info-box">
+                        <small class="text-muted">To'lov usuli</small>
+                        <p class="fw-semibold mb-0">{{ order.get_payment_method_display }}</p>
+                    </div>
+                    <div class="info-box">
+                        <small class="text-muted">Viloyat / Tuman</small>
+                        <p class="fw-semibold mb-0">{{ order.region|default:"—" }}{% if order.district %} / {{ order.district }}{% endif %}</p>
+                    </div>
+                    <div class="info-box">
+                        <small class="text-muted">Yetkazib berish manzili</small>
+                        <p class="fw-semibold mb-0">{{ order.shipping_address }}</p>
+                    </div>
+                    {% if order.note %}
+                    <div class="info-box">
+                        <small class="text-muted">Izoh</small>
+                        <p class="fw-semibold mb-0">{{ order.note }}</p>
+                    </div>
+                    {% endif %}
+
+                    <div class="mt-4">
+                        <small class="text-muted fw-bold d-block mb-2">Buyurtma holati</small>
+                        {% for status_val, status_label in order.STATUS_CHOICES %}
+                        <div class="status-step {% if order.status == status_val %}active{% endif %}">
+                            <div class="rounded-circle {% if order.status == status_val %}bg-dark{% else %}bg-light border{% endif %}"></div>
+                            <span class="{% if order.status == status_val %}fw-bold{% else %}text-muted{% endif %}">
+                                {{ status_label }}
+                            </span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% block title %}Buyurtma berish - E-Shop{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="page-heading mb-4">
+        <span class="badge bg-warning text-dark mb-2">Checkout Pro</span>
+        <h3 class="fw-bold mb-1"><i class="bi bi-credit-card"></i> Buyurtma berish</h3>
+        <p class="text-muted mb-0">Yetkazib berish, kupon va to'lov usulini tanlang.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 glass-card">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4"><i class="bi bi-truck"></i> Yetkazib berish ma'lumotlari</h5>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">To'liq ism *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                    <input type="text" class="form-control" name="full_name" value="{{ request.user.get_full_name|default:request.user.username }}" placeholder="Ism Familiya" required>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Telefon raqami *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                                    <input type="tel" class="form-control" name="phone" value="{{ request.user.phone|default:'+998957211391' }}" placeholder="+998957211391" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Viloyat</label>
+                                <select name="region" class="form-select">
+                                    <option value="">Tanlanmagan</option>
+                                    {% for region in regions %}
+                                    <option value="{{ region }}">{{ region }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Tuman/Shahar</label>
+                                <select name="district" class="form-select">
+                                    <option value="">Tanlanmagan</option>
+                                    {% for district in districts %}
+                                    <option value="{{ district }}">{{ district }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Yetkazib berish manzili *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                                    <textarea class="form-control" name="shipping_address" rows="3" placeholder="O'zbekiston, Buxoro viloyati, Vobkent, Kolxatib MFY..." required>{{ request.user.address }}</textarea>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Izoh (ixtiyoriy)</label>
+                                <textarea class="form-control" name="note" rows="2" placeholder="Qo'shimcha izoh..."></textarea>
+                            </div>
+                        </div>
+
+                        <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-gift"></i> Promokod / Kupon</h5>
+                        <div class="coupon-box">
+                            <input type="text" name="coupon_code" class="form-control" placeholder="Kupon kodi, masalan: ZAHON10">
+                            <button type="button" class="btn btn-warning fw-semibold" onclick="document.querySelector('input[name=coupon_code]').focus()">Qo'llash</button>
+                        </div>
+
+                        <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-wallet2"></i> To'lov usuli</h5>
+                        <div class="payment-grid">
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="cash" checked class="form-check-input mt-0">
+                                <i class="bi bi-cash-coin"></i>
+                                <span><strong>Naqd pul</strong><small>Yetkazib berilganda to'lash</small></span>
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="uzcard" class="form-check-input mt-0">
+                                <i class="bi bi-bank"></i>
+                                <span><strong>Uzcard</strong><small>Karta orqali to'lov</small></span>
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="humo" class="form-check-input mt-0">
+                                <i class="bi bi-credit-card-2-front"></i>
+                                <span><strong>Humo</strong><small>Karta orqali to'lov</small></span>
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="click" class="form-check-input mt-0">
+                                <i class="bi bi-phone"></i>
+                                <span><strong>Click</strong><small>Click orqali to'lov</small></span>
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="payme" class="form-check-input mt-0">
+                                <i class="bi bi-wallet2"></i>
+                                <span><strong>Payme</strong><small>Payme orqali to'lov</small></span>
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="uzumbank" class="form-check-input mt-0">
+                                <i class="bi bi-building"></i>
+                                <span><strong>Uzum Bank</strong><small>Bank kartasi orqali</small></span>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-dark w-100 py-3 mt-4 fw-semibold fs-5">
+                            <i class="bi bi-bag-check"></i> Buyurtmani tasdiqlash
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 sticky-top glass-card">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4"><i class="bi bi-receipt"></i> Buyurtma xulosasi</h5>
+                    {% for item in cart.items.all %}
+                    <div class="d-flex gap-3 mb-3 border-bottom pb-3">
+                        <div style="width:58px;height:58px;flex-shrink:0;">
+                            {% if item.product.image %}
+                                <img src="{{ item.product.image.url }}" class="rounded-3 w-100 h-100" style="object-fit:cover;">
+                            {% else %}
+                                <div class="placeholder-image rounded-3 w-100 h-100 d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-image text-muted"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1">
+                            <p class="mb-0 small fw-semibold">{{ item.product.name }}</p>
+                            <p class="text-muted small mb-0">{{ item.quantity }} x {{ item.product.price|floatformat:0 }} so'm</p>
+                        </div>
+                        <strong class="small">{{ item.total_price|floatformat:0 }} so'm</strong>
+                    </div>
+                    {% endfor %}
+                    <div class="summary-row">
+                        <span>Mahsulotlar</span>
+                        <strong>{{ subtotal|floatformat:0 }} so'm</strong>
+                    </div>
+                    {% if coupon or discount %}
+                    <div class="alert alert-success mt-3 mb-0 d-flex align-items-center gap-2" role="alert">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <div>
+                            <strong>Kupon:</strong> {{ coupon.code }}
+                            <br><small class="text-muted">Chegirma: -{{ discount|floatformat:0 }} so'm</small>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="summary-row text-success mt-2">
+                        <span>Chegirma</span>
+                        <strong>-{{ discount|floatformat:0 }} so'm</strong>
+                    </div>
+                    <div class="summary-row text-success">
+                        <span>Yetkazib berish</span>
+                        <strong>{{ shipping_fee|floatformat:0 }} so'm</strong>
+                    </div>
+                    <hr>
+                    <div class="summary-row total-row">
+                        <span>Jami</span>
+                        <span>{{ grand_total|floatformat:0 }} so'm</span>
+                    </div>
+                    <div class="delivery-info mt-3">
+                        <strong><i class="bi bi-info-circle"></i> Yetkazib berish qoidalari</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>75 000 so'mgacha: 10 000 so'm</li>
+                            <li>200 000 so'mgacha: 5 000 so'm</li>
+                            <li>1 000 000 so'mdan yuqori: tekin</li>
+                            <li>Viloyat/tuman tanlansa kuryer narxi aniqroq hisoblanadi.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

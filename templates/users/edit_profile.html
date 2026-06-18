@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}Profilni Tahrirlash{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="page-heading mb-4">
+        <span class="badge bg-warning text-dark mb-2">Profile</span>
+        <h3 class="fw-bold mb-1"><i class="bi bi-pencil-square"></i> Profilni tahrirlash</h3>
+        <p class="text-muted mb-0">Shaxsiy ma'lumotlar, manzil va profil rasmingizni yangilang.</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="profile-picture-box mb-4 text-center">
+                            {% if profile.profile_picture %}
+                                <img src="{{ profile.profile_picture.url }}" class="profile-preview rounded-circle shadow-sm" alt="Profil rasmi">
+                            {% else %}
+                                <div class="profile-preview rounded-circle bg-light border d-flex align-items-center justify-content-center mx-auto">
+                                    <i class="bi bi-person-fill text-muted" style="font-size:54px;"></i>
+                                </div>
+                            {% endif %}
+                            <label class="form-label fw-semibold mt-3">Profil rasmi</label>
+                            {{ profile_form.profile_picture }}
+                            <small class="text-muted d-block">Rasm yuklash orqali profilingizni chiroyli ko'rinishga keltiring.</small>
+                        </div>
+
+                        <h6 class="text-muted fw-bold mb-3 border-bottom pb-2">
+                            <i class="bi bi-person"></i> Shaxsiy ma'lumotlar
+                        </h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-sm-6">
+                                <label class="form-label">Ism</label>
+                                {{ user_form.first_name }}
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label">Familiya</label>
+                                {{ user_form.last_name }}
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label">Email</label>
+                                {{ user_form.email }}
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label">Telefon</label>
+                                {{ user_form.phone }}
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Manzil</label>
+                                {{ user_form.address }}
+                            </div>
+                        </div>
+
+                        <h6 class="text-muted fw-bold mb-3 border-bottom pb-2">
+                            <i class="bi bi-card-text"></i> Profil ma'lumotlari
+                        </h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-sm-6">
+                                <label class="form-label">Tug'ilgan sana</label>
+                                {{ profile_form.date_of_birth }}
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label">Veb-sayt</label>
+                                {{ profile_form.website }}
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Bio</label>
+                                {{ profile_form.bio }}
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button type="submit" class="btn btn-dark px-4">
+                                <i class="bi bi-check-lg"></i> Saqlash
+                            </button>
+                            <a href="{% url 'profile' %}" class="btn btn-outline-secondary px-4">
+                                <i class="bi bi-x-lg"></i> Bekor qilish
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

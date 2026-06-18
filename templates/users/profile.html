@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Profil - {{ profile.user.username }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="page-heading mb-4">
+        <span class="badge bg-warning text-dark mb-2">Profile</span>
+        <h3 class="fw-bold mb-1"><i class="bi bi-person-circle"></i> Mening profilim</h3>
+        <p class="text-muted mb-0">Shaxsiy ma'lumotlar, manzil va buyurtmalar tarixi.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 rounded-4 text-center p-4">
+                {% if profile.profile_picture %}
+                    <img src="{{ profile.profile_picture.url }}" class="rounded-circle mx-auto mb-3 shadow profile-preview" alt="Profil rasmi">
+                {% else %}
+                    <div class="rounded-circle bg-light border d-flex align-items-center justify-content-center mx-auto mb-3 profile-preview">
+                        <i class="bi bi-person-fill text-muted" style="font-size:60px;"></i>
+                    </div>
+                {% endif %}
+                <h5 class="fw-bold mb-1">{{ profile.user.get_full_name|default:profile.user.username }}</h5>
+                <p class="text-muted small mb-3">@{{ profile.user.username }}</p>
+                {% if profile.bio %}
+                    <p class="text-muted small">{{ profile.bio }}</p>
+                {% endif %}
+                <a href="{% url 'edit_profile' %}" class="btn btn-dark btn-sm w-100">
+                    <i class="bi bi-pencil"></i> Profilni tahrirlash
+                </a>
+            </div>
+
+            <div class="card shadow-sm border-0 rounded-4 p-4 mt-3">
+                <h6 class="fw-bold mb-3"><i class="bi bi-geo-alt"></i> Asosiy manzil</h6>
+                <p class="text-muted mb-0">{{ profile.user.address|default:"O'zbekiston, Buxoro viloyati, Vobkent, Kolxatib MFY, 41-uy" }}</p>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-4 mb-4">
+                <div class="card-header bg-white fw-bold border-0 pt-4 pb-0">
+                    <h5><i class="bi bi-info-circle"></i> Shaxsiy ma'lumotlar</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <div class="info-box">
+                                <small class="text-muted d-block">Ism</small>
+                                <strong>{{ profile.user.first_name|default:"—" }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="info-box">
+                                <small class="text-muted d-block">Familiya</small>
+                                <strong>{{ profile.user.last_name|default:"—" }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="info-box">
+                                <small class="text-muted d-block"><i class="bi bi-envelope"></i> Email</small>
+                                <strong>{{ profile.user.email|default:"—" }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="info-box">
+                                <small class="text-muted d-block"><i class="bi bi-telephone"></i> Telefon</small>
+                                <strong>{{ profile.user.phone|default:"+998 95 721 13 91" }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="info-box">
+                                <small class="text-muted d-block"><i class="bi bi-calendar"></i> Tug'ilgan sana</small>
+                                <strong>{{ profile.date_of_birth|date:"d.m.Y"|default:"—" }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="info-box">
+                                <small class="text-muted d-block"><i class="bi bi-globe"></i> Veb-sayt</small>
+                                {% if profile.website %}
+                                    <a href="{{ profile.website }}" target="_blank" class="fw-bold text-decoration-none">{{ profile.website }}</a>
+                                {% else %}
+                                    <strong>—</strong>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="info-box">
+                                <small class="text-muted d-block"><i class="bi bi-geo-alt"></i> Manzil</small>
+                                <strong>{{ profile.user.address|default:"O'zbekiston, Buxoro viloyati, Vobkent, Kolxatib MFY, 41-uy" }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-white fw-bold border-0 pt-4 pb-0">
+                    <h5><i class="bi bi-bag-check"></i> So'nggi buyurtmalar</h5>
+                </div>
+                <div class="card-body">
+                    {% with orders=profile.user.orders.all|slice:":3" %}
+                    {% if orders %}
+                        {% for order in orders %}
+                        <div class="d-flex justify-content-between align-items-center border-bottom py-2 flex-wrap gap-2">
+                            <div>
+                                <strong>#{{ order.id }}</strong>
+                                <span class="text-muted small ms-2">{{ order.created_at|date:"d.m.Y" }}</span>
+                            </div>
+                            <div class="d-flex gap-2 align-items-center flex-wrap">
+                                <span class="status-badge px-3 py-2
+                                    {% if order.status == 'delivered' %}status-success
+                                    {% elif order.status == 'cancelled' %}status-danger
+                                    {% elif order.status == 'shipped' %}status-info
+                                    {% elif order.status == 'processing' %}status-primary
+                                    {% else %}status-warning{% endif %}">
+                                    {{ order.get_status_display }}
+                                </span>
+                                <strong>{{ order.grand_total_price|floatformat:0 }} so'm</strong>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <a href="{% url 'orders' %}" class="btn btn-outline-dark btn-sm mt-3">
+                            Barcha buyurtmalar <i class="bi bi-arrow-right"></i>
+                        </a>
+                    {% else %}
+                        <p class="text-muted mb-0">Hali buyurtma yo'q. <a href="{% url 'product_list' %}">Xarid qilishni boshlang!</a></p>
+                    {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

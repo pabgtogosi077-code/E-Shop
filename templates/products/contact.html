@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Kontakt - E-Shop{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="page-heading mb-4">
+        <span class="badge bg-warning text-dark mb-2">Contact</span>
+        <h3 class="fw-bold mb-1"><i class="bi bi-telephone"></i> Kontakt</h3>
+        <p class="text-muted mb-0">Savollar, hamkorlik va buyurtma bo'yicha murojaat qoldiring.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 glass-card p-4">
+                <h5 class="fw-bold mb-3">Bog'lanish ma'lumotlari</h5>
+                <div class="info-box mb-3">
+                    <small class="text-muted d-block">Telefon</small>
+                    <strong><a href="tel:+998957211391" class="text-decoration-none">+998 95 721 13 91</a></strong>
+                </div>
+                <div class="info-box mb-3">
+                    <small class="text-muted d-block">Telegram</small>
+                    <strong><a href="https://t.me/Jahon_Dev" class="text-decoration-none">@Jahon_Dev</a></strong>
+                </div>
+                <div class="info-box">
+                    <small class="text-muted d-block">Manzil</small>
+                    <strong>O'zbekiston, Buxoro viloyati, Vobkent, Kolxatib MFY, 41-uy</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 glass-card p-4">
+                <h5 class="fw-bold mb-3">Xabar yuborish</h5>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Ism</label>
+                            <input type="text" name="name" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Telefon</label>
+                            <input type="tel" name="phone" class="form-control">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Xabar</label>
+                            <textarea name="message" class="form-control" rows="5" required></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-dark px-4"><i class="bi bi-send"></i> Yuborish</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
