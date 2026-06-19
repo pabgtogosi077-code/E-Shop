@@ -1,0 +1,9 @@
+{
+  "build": {
+    "builder": "NIXPACKS"
+  },
+  "deploy": {
+    "startCommand": "gunicorn core.wsgi --log-file -",
+    "releaseCommand": "python manage.py collectstatic --noinput"
+  }
+}
